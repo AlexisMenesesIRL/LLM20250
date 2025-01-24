@@ -3,7 +3,9 @@ from flask import Flask
 import re
 from datetime import datetime
 import json
+import config
 
+print(config.GTP_KEY)
 app = Flask(__name__, static_url_path="/", static_folder="resources")
 
 @app.route("/")
