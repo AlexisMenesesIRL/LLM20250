@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi primera Pagina con flask</title>
+</head>
+<body>
+    <h1>Esto cambiara con el boton</h1>
+
+    <h2 id="cliente"></h2>
+    <button onclick="llamado()"> try me</button>
+
+    <script>
+        function llamado(){
+            fetch("/get_dialog/Alexis&Meneses")
+            .then((response)=>response.json())
+            .then(data=>document.getElementById("cliente").innerText=data.response)
+        }   
+    </script>
+    
+
+</body>
+</html>
