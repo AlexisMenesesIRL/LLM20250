@@ -4,8 +4,10 @@ import re
 from datetime import datetime
 import json
 import config
-import openai
-openai.api_key = config.GPT_KEY
+from openai import OpenAI
+client = OpenAI(
+    api_key=config.GPT_KEY,
+)
 
 
 app = Flask(__name__, static_url_path="/", static_folder="resources")
@@ -16,15 +18,15 @@ def root():
 
 @app.route("/get_dialog/<nombre>&<apellido>")
 def processar_dialog(nombre,apellido):
-    response = openai.ChatCompletion.create(
-                        model = "gpt-3.5-turbo-16k-0613",
+    response = client.chat.completions.create(
+                        model = "gpt-3.5-turbo",
                         messages = [
-                            {"role": "system", "content": "Eres un agente virtual que nos dira una descripción basado en el nombre que te daremos."},
-                            {"role": "user", "content": "mi nombre es "+ nombre + " " + apellido }
+                            {"role": "system", "content": "Cada vez que te de un nombre, quiero que describas cualidades hermosas y fascinantes en base a ese nombre."},
+                            {"role": "user", "content": nombre + " " + apellido }
                         ],
                         temperature=0
                 )
-    text = response['choices'][0]['message']['content']
+    text = response.choices[0].message.content.strip()
     return json.dumps({"response":text})
     
 

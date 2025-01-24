@@ -7,13 +7,15 @@
 </head>
 <body>
     <h1>Esto cambiara con el boton</h1>
+    Nombre: <input id="nombre">
+    Apellido: <input id="apellido">
 
     <h2 id="cliente"></h2>
     <button onclick="llamado()"> try me</button>
 
     <script>
         function llamado(){
-            fetch("/get_dialog/Alexis&Meneses")
+            fetch("/get_dialog/"+document.getElementById("nombre").value +"&" + document.getElementById("apellido").value)
             .then((response)=>response.json())
             .then(data=>document.getElementById("cliente").innerText=data.response)
         }   
