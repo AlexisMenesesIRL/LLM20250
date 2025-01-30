@@ -1,2 +1,2 @@
-FirstServer/__pycache__
-FirstServer/config.py
+*.pyc
+config.py
