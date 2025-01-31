@@ -1,9 +1,13 @@
 from tkinter import *
 from tkinter import ttk
 from openai import OpenAI
-import config 
+import os
+import sys
+sys.path.insert(1, os.path.abspath(os.path.join(os.path.join(os.path.abspath(__file__),".."),"..")))
+
+from config import GPT_KEY
 client = OpenAI(
-    api_key=config.GPT_KEY,
+    api_key= GPT_KEY,
 )
 
 

@@ -3,10 +3,13 @@ from flask import Flask
 import re
 from datetime import datetime
 import json
-import config
 from openai import OpenAI
+import sys
+sys.path.insert(1, os.path.abspath(os.path.join(os.path.join(os.path.abspath(__file__),".."),"..")))
+from config import GPT_KEY
+
 client = OpenAI(
-    api_key=config.GPT_KEY,
+    api_key= GPT_KEY,
 )
 
 
