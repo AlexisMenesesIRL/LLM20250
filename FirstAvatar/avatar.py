@@ -20,6 +20,7 @@ canvas.pack(pady=20)
 canvas.create_oval(80, 60, 180, 240, width=1, fill='white')
 canvas.create_oval(250, 60, 350, 240, width=1, fill='white')
 
+
 left_eye = canvas.create_oval(100, 120, 140, 160, width=1, fill='black')
 right_eye = canvas.create_oval(270, 120, 310, 160, width=1, fill='black')
 
@@ -30,25 +31,37 @@ def move_eye_left(movementx, movementy):
 def move_eye_right(movementx, movementy):
     canvas.moveto(right_eye,movementx,movementy)
 
-messages = [
-        {"role": "system", "content": "Genera un json con el formato {pupila1:{x,y},pupila2:{x,y}} en donde no repitas los numeros."},
-        {"role": "user", "content": " Genera un json random diferente al anterior. Devuelve un unico valor de x entre 120 y 140 para pupila1. Devuelve un unico valor de x entre 290 y 310. El valor de y para pupila1 y pupila2 debe ser igual "}
-    ]
+prompt = ("Genera un json con el formato {pupila1:{x,y},pupila2:{x,y}}." 
+          "Estos números son coordenadas de ojos distribuidos en un canvas de 600 x 400."
+          "El contorno del ojo izquierdo tiene el extremo izquierdo superior en el punto (80,60) y el extremo derecho inferior en el punto (180,240)." 
+          "El contorno del ojo derecho tiene el extremo izquierdo superior en el punto (250,60) y el extremo derecho inferior en el punto (350,240)."
+          "El tamaño de las pupilas es 20x20."
+          
+          )
 
+
+posicionx=Text(window, height=1, width=5)
+posicionx.pack()
+posiciony=Text(window, height=1, width=5)
+posiciony.pack()
 def mover():
-
+    messages = [
+        {"role": "system", "content": prompt},{"role": "user", "content": "ahora has que los ojos miren hacia ("+ posicionx.get("1.0",'end-1c') +","+posiciony.get("1.0",'end-1c')+"). "}
+    ]
     response = client.chat.completions.create(
                         model = "gpt-3.5-turbo",
                         messages = messages,
                         temperature=0
                 )
     text = response.choices[0].message.content.strip()
-    messages.append({"role":"assistant","content":text})
+    print(messages)
+    #messages.append({"role":"assistant","content":text})
     valor_pupilas = json.loads(text)
     print(valor_pupilas)
     move_eye_right(valor_pupilas["pupila1"]["x"],valor_pupilas["pupila1"]["y"])
     move_eye_left(valor_pupilas["pupila2"]["x"],valor_pupilas["pupila2"]["y"])
     # respuestaDeGPT.set(text)
+
 
 btn = Button(window, text = 'Click me !', 
                  command = mover) 
