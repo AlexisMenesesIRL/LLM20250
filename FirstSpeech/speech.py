@@ -8,13 +8,15 @@ import tempfile
 import sounddevice as sd
 import soundfile as sf
 import time
+from langdetect import detect
+from langdetect import detect_langs
 pygame.init()
 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 sys.path.insert(1, os.path.abspath(os.path.join(os.path.join(os.path.abspath(__file__),".."),"..")))
 
-tts = TTS("tts_models/es/css10/vits").to(device)
+tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
 
 from config import GPT_KEY
 
@@ -26,6 +28,7 @@ duration = 5
 frequency = 44100
 channels = 1
 print("Empieza a hablar")
+
 recording = sd.rec(int(frequency*duration),samplerate = frequency, channels = channels,blocking=True)
 sd.wait()
 with tempfile.NamedTemporaryFile(suffix=".wav",delete=False) as temp_audio:
@@ -52,3 +55,8 @@ pygame.mixer.music.load("ejemplo.wav")
 pygame.mixer.music.play()
 pygame.event.wait()
 time.sleep(len(text)*0.2)
+
+#Clonar tu propia voz
+# text = "hola, esto es una prueba para poder verificar que el tts esta hablando como yo quiero."
+# tts.tts_to_file(text=text, speaker_wav="vozVictorEcheverria.wav", language=detect(text),
+#                     file_path="example.wav")
