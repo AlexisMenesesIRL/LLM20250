@@ -28,7 +28,7 @@ def send_instruction():
         response = client.chat.completions.create(
                             model = "gpt-3.5-turbo",
                             messages = [
-                                {"role": "system", "content": "Vas a responder un archivo json moviendo el robot con el angulo solicitado."},
+                                {"role": "system", "content": "Vas a responder con un archivo json moviendo el robot con el angulo solicitado. Si no hay angulo, muevelo a un angulo random."},
                                 {"role": "user", "content": instruction["instruction"] }
                             ],
                             temperature=0
