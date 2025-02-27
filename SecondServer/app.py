@@ -21,6 +21,7 @@ def root():
 
 @app.route("/send_instruction",methods=['POST'])
 def send_instruction():
+    print("received something")
     if request.method == 'POST':
         instruction = request.get_json()
         print(instruction)
