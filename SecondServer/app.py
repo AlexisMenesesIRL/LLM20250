@@ -21,20 +21,20 @@ def root():
 
 @app.route("/send_instruction",methods=['POST'])
 def send_instruction():
-    print("received something")
+    text = ""
     if request.method == 'POST':
         instruction = request.get_json()
-        print(instruction)
-    text = instruction
-    # response = client.chat.completions.create(
-    #                     model = "gpt-3.5-turbo",
-    #                     messages = [
-    #                         {"role": "system", "content": "Cada vez que te de un nombre, quiero que describas cualidades hermosas y fascinantes en base a ese nombre."},
-    #                         {"role": "user", "content": nombre }
-    #                     ],
-    #                     temperature=0
-    #             )
-    # text = response.choices[0].message.content.strip()
+        data = json.loads(instruction)
+        print(data)
+        response = client.chat.completions.create(
+                            model = "gpt-3.5-turbo",
+                            messages = [
+                                {"role": "system", "content": "Vas a responder un archivo json moviendo el robot con el angulo solicitado."},
+                                {"role": "user", "content": data["instruction"] }
+                            ],
+                            temperature=0
+                    )
+        text = response.choices[0].message.content.strip()
     return json.dumps({"response":text})
     
 
