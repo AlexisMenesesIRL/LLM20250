@@ -6,8 +6,6 @@ import tempfile
 import sounddevice as sd
 import soundfile as sf
 import time
-from langdetect import detect
-from langdetect import detect_langs
 pygame.init()
 
 sys.path.insert(1, os.path.abspath(os.path.join(os.path.join(os.path.abspath(__file__),".."),"..")))
