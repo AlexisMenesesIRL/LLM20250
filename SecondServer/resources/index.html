@@ -15,7 +15,7 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let debug = false;
         let recognition;
-        let process_recognition = data => { console.log(data); document.getElementById("Speech").innerText = data;}
+        let process_recognition = data => { console.log(data); document.getElementById("Speech").innerText = data; enviando_instruccion(instruction);}
 
         const init_speech_recognition = () =>{
             recognition = new SpeechRecognition();
@@ -78,8 +78,8 @@
         const enable_debug = _ => debug = true;
 
 
-        function llamado(){
-            fetch("/get_dialog/")
+        function enviando_instruccion(instruction){
+            fetch("/send_instruction",{ method: "POST", body: JSON.stringify({ instruction })})
             .then((response)=>response.json())
             .then(data=>document.getElementById("cliente").innerText=data.response)
         }   

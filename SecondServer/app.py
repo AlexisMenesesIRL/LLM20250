@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, request
 import re
 from datetime import datetime
 import json
@@ -19,17 +19,21 @@ app = Flask(__name__, static_url_path="/", static_folder="resources")
 def root():
     return app.send_static_file('index.html')
 
-@app.route("/get_dialog/<nombre>&<apellido>")
-def processar_dialog(nombre,apellido):
-    response = client.chat.completions.create(
-                        model = "gpt-3.5-turbo",
-                        messages = [
-                            {"role": "system", "content": "Cada vez que te de un nombre, quiero que describas cualidades hermosas y fascinantes en base a ese nombre."},
-                            {"role": "user", "content": nombre + " " + apellido }
-                        ],
-                        temperature=0
-                )
-    text = response.choices[0].message.content.strip()
+@app.route("/send_instruction",method=['POST'])
+def send_instruction():
+    if request.method == 'POST':
+        instruction = request.args.get('instruction', default=0, type=str)
+        print(instruction)
+    text = instruction
+    # response = client.chat.completions.create(
+    #                     model = "gpt-3.5-turbo",
+    #                     messages = [
+    #                         {"role": "system", "content": "Cada vez que te de un nombre, quiero que describas cualidades hermosas y fascinantes en base a ese nombre."},
+    #                         {"role": "user", "content": nombre }
+    #                     ],
+    #                     temperature=0
+    #             )
+    # text = response.choices[0].message.content.strip()
     return json.dumps({"response":text})
     
 
