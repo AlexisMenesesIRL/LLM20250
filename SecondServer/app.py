@@ -120,4 +120,4 @@ def hello_there(name):
 
 if __name__ == "__main__":
     app.run(host=os.getenv("APP_ADDRESS", 'localhost'), \
-    port=os.getenv("APP_PORT", 80))
+    port=os.getenv("APP_PORT", 8000))
