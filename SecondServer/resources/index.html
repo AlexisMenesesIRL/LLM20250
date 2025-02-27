@@ -7,18 +7,89 @@
 </head>
 <body>
     <h1>Esto cambiara con el boton</h1>
-    Nombre: <input id="nombre">
-    Apellido: <input id="apellido">
-
+    <h2 id="Speech"></h2>
     <h2 id="cliente"></h2>
-    <button onclick="llamado()"> try me</button>
+    <button id="speak"> Hablar </button>
 
     <script>
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let debug = false;
+        let recognition;
+        let process_recognition = data => { console.log(data); document.getElementById("Speech").innerText = data;}
+
+        const init_speech_recognition = () =>{
+            recognition = new SpeechRecognition();
+            
+            recognition.lang = "es-MX";
+            recognition.interimResults = false;
+            recognition.continious = false;
+
+            recognition.onsoundstart = ()=>{
+                if(debug){
+                    console.log("El usuario ha empezado a hablar");
+                }
+            }
+
+            recognition.onnomatch = () =>{
+                if(debug){
+                    console.log("No se encontro matching");
+                }
+            }
+
+            recognition.onerror = (e) =>{
+                console.log("Hubo un error: ",e.error);
+            }
+
+            recognition.onsoundend = () => {
+                if(debug){
+                    console.log("El reconocimiento del sonido ha acabado");
+                }
+            }
+
+            recognition.onspeechend = () =>{
+                if(debug){
+                    console.log("El reconocimiento de texto ha acabado");
+                }
+            }
+
+            recognition.onresult = (e)=>{
+                let results = e.results;
+                for(let result of results){
+                    if(result.isFinal){
+                        process_recognition(result[0].transcript)
+                    }
+                }
+            }
+            console.log("Inicializando speech recognition");
+        }
+
+        const start_recognition = ()=>{
+            recognition.start();
+        }
+
+        const stop_recognition = () =>{
+            recognition.stop();
+        }
+
+        const set_process_recognition = callback =>{
+            process_recognition = callback;
+        }
+
+        const enable_debug = _ => debug = true;
+
+
         function llamado(){
-            fetch("/get_dialog/"+document.getElementById("nombre").value +"&" + document.getElementById("apellido").value)
+            fetch("/get_dialog/")
             .then((response)=>response.json())
             .then(data=>document.getElementById("cliente").innerText=data.response)
         }   
+
+        document.body.onload = () =>{
+            init_speech_recognition();
+        };
+
+        document.getElementById("speak").onmousedown = () => { start_recognition(); }
+        document.getElementById("speak").onmouseup = () => { stop_recognition(); }
     </script>
     
 
