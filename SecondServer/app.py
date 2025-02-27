@@ -44,7 +44,7 @@ class StatePublisher(Node):
         tilt = 0.
         tinc = degree
         swivel = 0.
-        angle = 0.
+        # angle = 0.
         height = 0.
         hinc = 0.005
         # message declarations
