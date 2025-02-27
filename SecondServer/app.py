@@ -71,8 +71,8 @@ class StatePublisher(Node):
             euler_to_quaternion(0, 0, angle + pi/2) # roll,pitch,yaw
 
         # send the joint state and transform
-        joint_pub.publish(joint_state)
-        broadcaster.sendTransform(odom_trans)
+        self.joint_pub.publish(joint_state)
+        self.broadcaster.sendTransform(odom_trans)
 
         # Create new robot state
         # tilt += tinc
