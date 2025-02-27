@@ -24,13 +24,12 @@ def send_instruction():
     text = ""
     if request.method == 'POST':
         instruction = request.get_json()
-        data = json.loads(instruction)
-        print(data)
+        print(instruction["instruction"])
         response = client.chat.completions.create(
                             model = "gpt-3.5-turbo",
                             messages = [
                                 {"role": "system", "content": "Vas a responder un archivo json moviendo el robot con el angulo solicitado."},
-                                {"role": "user", "content": data["instruction"] }
+                                {"role": "user", "content": instruction["instruction"] }
                             ],
                             temperature=0
                     )
