@@ -19,7 +19,7 @@ app = Flask(__name__, static_url_path="/", static_folder="resources")
 def root():
     return app.send_static_file('index.html')
 
-@app.route("/send_instruction",method=['POST'])
+@app.route("/send_instruction",methods=['POST'])
 def send_instruction():
     if request.method == 'POST':
         instruction = request.args.get('instruction', default=0, type=str)
