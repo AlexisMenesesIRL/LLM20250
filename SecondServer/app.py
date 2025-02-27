@@ -22,71 +22,55 @@ client = OpenAI(
 
 app = Flask(__name__, static_url_path="/", static_folder="resources")
 
+def euler_to_quaternion(roll, pitch, yaw):
+    qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2)
+    qy = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2)
+    qz = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2)
+    qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2)
+    return Quaternion(x=qx, y=qy, z=qz, w=qw)
 
-class StatePublisher(Node):
+rclpy.init()
 
-    def __init__(self):
-        global joint_pub, broadcaster
-        rclpy.init()
-        super().__init__('state_publisher')
-        
-        qos_profile = QoSProfile(depth=10) # queue size of 10 
-        self.joint_pub = self.create_publisher(JointState, 'joint_states', qos_profile)
-        self.broadcaster = TransformBroadcaster(self, qos=qos_profile)
-        self.nodeName = self.get_name()
-        self.get_logger().info("{0} started".format(self.nodeName))
+node = Node("moving_robot")
 
-
-
-    def move_to_angle(self,angle):
-        degree = pi / 180.0
-        # robot state
-        tilt = 0.
-        tinc = degree
-        swivel = 0.
-        # angle = 0.
-        height = 0.
-        hinc = 0.005
-        # message declarations
-        odom_trans = TransformStamped()
-        odom_trans.header.frame_id = 'odom'
-        odom_trans.child_frame_id = 'axis'
-        joint_state = JointState()
+joint_pub = node.create_publisher(JointState, 'joint_states', 10)
+broadcaster = TransformBroadcaster(node,10)
+degree = pi / 180.0
+# robot state
+tilt = 0.
+tinc = degree
+swivel = 0.
+angle = 0.
+height = 0.
+hinc = 0.005
+# message declarations
+odom_trans = TransformStamped()
+odom_trans.header.frame_id = 'odom'
+odom_trans.child_frame_id = 'axis'
+joint_state = JointState()
 
 
-        # update joint_state
-        now = self.get_clock().now()
-        joint_state.header.stamp = now.to_msg()
-        # Names of joints from the urdf file 
-        joint_state.name = ['swivel', 'tilt', 'periscope']
-        joint_state.position = [swivel, tilt, height]
+# update joint_state
+now = node.get_clock().now()
+joint_state.header.stamp = now.to_msg()
+# Names of joints from the urdf file 
+joint_state.name = ['swivel', 'tilt', 'periscope']
+joint_state.position = [swivel, tilt, height]
 
-        # update transform
-        # (moving in a circle with radius=2)
-        odom_trans.header.stamp = now.to_msg()
-        odom_trans.transform.translation.x = cos(angle*degree)*2
-        odom_trans.transform.translation.y = sin(angle*degree)*2
-        odom_trans.transform.translation.z = 0.7
-        odom_trans.transform.rotation = \
-            euler_to_quaternion(0, 0, angle*degree + pi/2) # roll,pitch,yaw
+# update transform
+# (moving in a circle with radius=2)
+odom_trans.header.stamp = now.to_msg()
+odom_trans.transform.translation.x = cos(angle*degree)*2
+odom_trans.transform.translation.y = sin(angle*degree)*2
+odom_trans.transform.translation.z = 0.7
+odom_trans.transform.rotation = \
+    euler_to_quaternion(0, 0, angle*degree + pi/2) # roll,pitch,yaw
 
-        # send the joint state and transform
-        print("angle to ", angle*degree)
-        print(odom_trans)
-        self.joint_pub.publish(joint_state)
-        self.broadcaster.sendTransform(odom_trans)
-
-        # Create new robot state
-        # tilt += tinc
-        # if tilt < -0.5 or tilt > 0.0:
-        #     tinc *= -1
-        # height += hinc
-        # if height > 0.2 or height < 0.0:
-        #     hinc *= -1
-        # swivel += degree
-        # angle += degree/4
-
-node = StatePublisher()
+# send the joint state and transform
+print("angle to ", angle*degree)
+print(odom_trans)
+joint_pub.publish(joint_state)
+broadcaster.sendTransform(odom_trans)
 
 @app.route("/")
 def root():
@@ -132,12 +116,7 @@ def hello_there(name):
     return content
 
 
-def euler_to_quaternion(roll, pitch, yaw):
-    qx = sin(roll/2) * cos(pitch/2) * cos(yaw/2) - cos(roll/2) * sin(pitch/2) * sin(yaw/2)
-    qy = cos(roll/2) * sin(pitch/2) * cos(yaw/2) + sin(roll/2) * cos(pitch/2) * sin(yaw/2)
-    qz = cos(roll/2) * cos(pitch/2) * sin(yaw/2) - sin(roll/2) * sin(pitch/2) * cos(yaw/2)
-    qw = cos(roll/2) * cos(pitch/2) * cos(yaw/2) + sin(roll/2) * sin(pitch/2) * sin(yaw/2)
-    return Quaternion(x=qx, y=qy, z=qz, w=qw)
+
 
 if __name__ == "__main__":
     app.run(host=os.getenv("APP_ADDRESS", 'localhost'), \
