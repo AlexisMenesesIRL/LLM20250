@@ -22,7 +22,7 @@ def root():
 @app.route("/send_instruction",methods=['POST'])
 def send_instruction():
     if request.method == 'POST':
-        instruction = request.args.get('instruction', default=0, type=str)
+        instruction = request.get_json()
         print(instruction)
     text = instruction
     # response = client.chat.completions.create(

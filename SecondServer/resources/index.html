@@ -79,7 +79,11 @@
 
 
         function enviando_instruccion(instruction){
-            fetch("/send_instruction",{ method: "POST", body: JSON.stringify({ instruction })})
+            fetch("/send_instruction",{ method: "POST",     
+                                        headers: {
+                                                "Content-Type": "application/json"
+                                        }, 
+            body: JSON.stringify({ instruction })})
             .then((response)=>response.json())
             .then(data=>document.getElementById("cliente").innerText=data.response)
         }   
