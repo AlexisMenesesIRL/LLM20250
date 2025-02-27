@@ -15,7 +15,7 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         let debug = false;
         let recognition;
-        let process_recognition = data => { console.log(data); document.getElementById("Speech").innerText = data; enviando_instruccion(instruction);}
+        let process_recognition = data => { console.log(data); document.getElementById("Speech").innerText = data; enviando_instruccion(data);}
 
         const init_speech_recognition = () =>{
             recognition = new SpeechRecognition();
