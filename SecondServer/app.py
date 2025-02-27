@@ -107,7 +107,7 @@ def send_instruction():
         text = response.choices[0].message.content.strip()
         data = json.loads(text)
         print(data)
-        node.move_to_angle(data["angle"])
+        node.move_to_angle(data["angulo"])
     return json.dumps({"response":text})
     
 
